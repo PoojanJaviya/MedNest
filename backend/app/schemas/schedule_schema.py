@@ -4,7 +4,6 @@ from typing import Optional, List
 
 
 class ScheduleCreate(BaseModel):
-    medicine_id: int
     times_of_day: List[str]
     days_of_week: Optional[List[str]] = None
     start_date: date
