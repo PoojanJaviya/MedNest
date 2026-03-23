@@ -205,3 +205,46 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# Python / Backend
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+.eggs/
+
+# Environment variables — never commit these
+.env
+.env.*
+!.env.example
+
+# Database
+*.db
+*.sqlite3
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+npm-debug.log*
+
+# Alembic — keep migrations, ignore cache
+backend/alembic/__pycache__/
