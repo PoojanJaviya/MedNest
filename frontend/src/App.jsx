@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage"
 import PatientsPage from "./pages/PatientsPage"
 import MedicinesPage from "./pages/MedicinesPage"
 import SchedulesPage from "./pages/SchedulesPage"
+import SignupPage  from "./pages/SignupPage"
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
         <Route path="/patients/:patientId/medicines" element={<MedicinesPage />} />
         <Route path="/medicines/:medicineId/schedules" element={<SchedulesPage />} />
         <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/signup" element={<SignupPage />} />
+        
       </Routes>
     </BrowserRouter>
   )

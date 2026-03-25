@@ -2,8 +2,9 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../api/axios"
 
-function LoginPage() {
+function SignupPage() {
   // Three pieces of state — like three variables that React watches
+  const [fullName, setFullName] = useState("")
   const [email, setEmail]       = useState("")
   const [password, setPassword] = useState("")
   const [error, setError]       = useState("")   // stores error message
@@ -13,24 +14,31 @@ function LoginPage() {
   const navigate = useNavigate()
 
   // This runs when the form is submitted
-  const handleLogin = async (e) => {
-    e.preventDefault()    // stops browser from reloading the page on submit
+  const handleSignup = async (e) => {
+  e.preventDefault()
 
-    try {
-      // POST /auth/login — same endpoint you built in auth_router.py
-      const response = await api.post("/auth/login", { email, password })
+  try {
+    // Step 1: Create account
+    await api.post('/auth/signup', { full_name: fullName, email, password })
 
-      // response.data is what your FastAPI returns: { access_token, token_type }
-      localStorage.setItem("token", response.data.access_token)
+    // Step 2: Auto-login
+    const response = await api.post('/auth/login', { email, password })
+    localStorage.setItem("token", response.data.access_token)
 
-      navigate("/patients")   // redirect to patients page on success
+    // Step 3: Redirect
+    navigate('/patients')
 
-    } catch (err) {
-      // FastAPI returns { detail: "..." } for HTTPExceptions
-      setError(err.response?.data?.detail || "Login failed")
-    }
+  } catch (err) {
+    // ✅ After
+const detail = err.response?.data?.detail
+if (Array.isArray(detail)) {
+  setError(detail[0]?.msg || "Signup failed")  // extract first error message
+} else {
+  setError(detail || "Signup failed")           // for plain string errors
+}
   }
-
+}
+  
   // JSX — looks like HTML but it's JavaScript
   // className instead of class (class is a reserved word in JS)
   return (
@@ -38,7 +46,7 @@ function LoginPage() {
       <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
 
         <h1 className="text-2xl font-bold text-center mb-2">🪺 MedNest</h1>
-        <p className="text-center text-gray-500 mb-6">Caregiver Login</p>
+        <p className="text-center text-gray-500 mb-6">Caregiver Register</p>
 
         {/* error && ... — Python equivalent: if error: show_div() */}
         {error && (
@@ -47,8 +55,21 @@ function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
-
+        <form onSubmit={handleSignup} className="space-y-4">
+        
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              type="Full Name"
+              value={fullName}                          /* controlled by state */
+              onChange={(e) => setFullName(e.target.value)}  /* updates state on every keystroke */
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Username"
+            />
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
@@ -81,15 +102,15 @@ function LoginPage() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition"
           >
-            Login
+            SignUp
           </button>
 
         </form>
 
         <p className="text-center text-sm text-gray-500 mt-4">
-          No account?{" "}
-          <a href="/signup" className="text-blue-600 hover:underline">
-            Sign up
+          Already have an account?{" "}
+          <a href="/login" className="text-blue-600 hover:underline">
+            Log in
           </a>
         </p>
 
@@ -98,4 +119,4 @@ function LoginPage() {
   )
 }
 
-export default LoginPage
+export default SignupPage
