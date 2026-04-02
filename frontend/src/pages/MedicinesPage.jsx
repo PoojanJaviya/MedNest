@@ -257,7 +257,7 @@ function MedicinesPage() {
 
                     <div className="flex gap-2">
                       <button
-                        onClick={() => navigate(`/medicines/${medicine.id}/schedules`)}
+                        onClick={() => navigate(`/schedules/medicine/${medicine.id}`, { state: { medicine } })}
                         className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg"
                       >
                         Schedules →

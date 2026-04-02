@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import api from "../api/axios"
 
-// Days config — defined outside component so it's not recreated on every render
 const ALL_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 function SchedulesPage() {
-  // ── URL params ─────────────────────────────────────────
   const { medicineId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [medicine, setMedicine] = useState(location.state?.medicine || null)
+
 
   // ── State ──────────────────────────────────────────────
-  const [medicine, setMedicine]   = useState(null)
   const [schedules, setSchedules] = useState([])
   const [loading, setLoading]     = useState(true)
   const [error, setError]         = useState("")
@@ -34,22 +34,16 @@ function SchedulesPage() {
   // ── Fetch ──────────────────────────────────────────────
   const fetchData = async () => {
     try {
-      const [medRes, schedRes] = await Promise.all([
-        api.get(`/medicines/${medicineId}`),         // get medicine info for header
-        api.get(`/schedules/medicine/${medicineId}`)
-      ])
-      setMedicine(medRes.data)
+      const schedRes = await api.get(`/schedules/medicine/${medicineId}`)
       setSchedules(schedRes.data)
     } catch (err) {
       if (err.response?.status === 401) navigate("/login")
-      // Medicine endpoint returns the medicine directly — if 404, go back
       if (err.response?.status === 404) navigate(-1)
       setError("Failed to load data")
     } finally {
       setLoading(false)
     }
   }
-
   useEffect(() => {
     fetchData()
   }, [medicineId])
