@@ -5,6 +5,7 @@ from app.database import SessionLocal
 from app.models.schedule_model import Schedule
 from app.models.medicine_model import Medicine
 from app.models.patient_model import Patient
+from app.services.whatsapp import send_whatsapp_reminder
 
 
 def check_and_send_reminders():
@@ -29,7 +30,13 @@ def check_and_send_reminders():
                 continue
 
             patient = schedule.medicine.patient
-            print(f"[REMINDER] {patient.patient_name} → {schedule.medicine.medicine_name}")
+            send_whatsapp_reminder(
+                to_number=patient.whatsapp_number,
+                medicine_name=schedule.medicine.medicine_name,
+                dosage=schedule.medicine.dosage,
+                instruction=schedule.medicine.instruction,
+                language=patient.language,
+            )
 
     finally:
         db.close()
